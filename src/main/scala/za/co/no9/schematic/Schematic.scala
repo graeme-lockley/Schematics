@@ -1,10 +1,5 @@
 package za.co.no9.schematic
 
-import java.awt.image.BufferedImage
-import java.awt.{Color, Font, Graphics2D, RenderingHints}
-import java.io.File
-import javax.imageio.ImageIO
-
 import scala.collection.mutable
 
 abstract class Direction {
@@ -27,16 +22,6 @@ case class Right() extends Direction {
 	override def origin(sr: SchematicRuntime): Position = sr.last.east
 }
 
-class Styles {
-	var boxWidth: Double = 100.0
-	var boxHeight: Double = 25.0
-	var moveWidth: Double = 30.0
-	var moveHeight: Double = 20.0
-	var textHeight: Double = 15.0
-	var origin: Position = Position(0.0, 0.0)
-	var direction: Direction = Right()
-}
-
 class SchematicRuntime(val style: Styles) {
 	private val nestedLayouts = new mutable.Stack[mutable.MutableList[ShapeLayout]]()
 
@@ -52,90 +37,6 @@ class SchematicRuntime(val style: Styles) {
 	def popLayouts(): Unit = nestedLayouts.pop()
 }
 
-trait Operations {
-	protected def addShape(shape: Shape): Shape
-
-	protected def styles(): Styles
-
-	def arrow(): ArrowShape = {
-		val arrow = new ArrowShape()
-		addShape(arrow)
-		arrow
-	}
-
-	def box(title: String = null, width: Double = styles().boxWidth, height: Double = styles().boxHeight, textHeight: Double = styles().textHeight): BoxShape = {
-		val box = new BoxShape(title, width, height, textHeight)
-		addShape(box)
-		box
-	}
-
-	def block(): BlockShape = {
-		val blockShape = new BlockShape(styles())
-		addShape(blockShape)
-		blockShape
-	}
-
-	def up(): DirectionShape = {
-		val directionShape = new DirectionShape(Up())
-		addShape(directionShape)
-		directionShape
-	}
-
-	def down(): DirectionShape = {
-		val directionShape = new DirectionShape(Down())
-		addShape(directionShape)
-		directionShape
-	}
-
-	def left(): DirectionShape = {
-		val directionShape = new DirectionShape(Left())
-		addShape(directionShape)
-		directionShape
-	}
-
-	def right(): DirectionShape = {
-		val directionShape = new DirectionShape(Right())
-		addShape(directionShape)
-		directionShape
-	}
-}
-
-class Image extends Operations {
-	val blockShape = new BlockShape(new Styles())
-
-	override protected def addShape(shape: Shape): Shape = blockShape.addShape(shape)
-
-	override protected def styles(): Styles = blockShape.styles()
-
-	def draw(): Unit = {
-		val width = 600
-		val height = 400
-
-		val layouts = mutable.MutableList[ShapeLayout]()
-		val schematicRuntime = new SchematicRuntime(styles())
-		schematicRuntime.pushLayouts(layouts)
-
-		val shapeLayout = blockShape.layout(schematicRuntime)
-
-		schematicRuntime.popLayouts()
-
-		val renderWidth = 2 + shapeLayout.location.ne.x - shapeLayout.location.sw.x
-		val renderHeight = 2 + shapeLayout.location.ne.y - shapeLayout.location.sw.y
-		println(renderWidth)
-		println(renderHeight)
-		val renderBI = new BufferedImage(renderWidth.toInt, renderHeight.toInt, BufferedImage.TYPE_INT_ARGB)
-		val renderGraphics = renderBI.createGraphics()
-		renderGraphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
-		println(shapeLayout.location.sw)
-
-		schematicRuntime.style.origin = Position(-shapeLayout.location.sw.x, -shapeLayout.location.sw.y)
-		renderGraphics.translate(schematicRuntime.style.origin.x, schematicRuntime.style.origin.y)
-
-		shapeLayout.render(renderGraphics)
-
-		ImageIO.write(renderBI, "PNG", new File("bob.png"))
-	}
-}
 
 case class Position(x: Double, y: Double) {
 	def newX(newX: Double): Position = Position(newX, y)
@@ -169,6 +70,12 @@ trait Location {
 	def west: Position
 
 	def nw: Position
+
+	def width: Double = east.x - west.x
+
+	def height: Double = south.y - north.y
+
+	def add(deltaX: Double, deltaY: Double): Location
 }
 
 class RectangleLocation(positionA: Position, positionB: Position) extends Location {
@@ -192,132 +99,30 @@ class RectangleLocation(positionA: Position, positionB: Position) extends Locati
 	override def east: Position = upperRight.newY(centre.y)
 
 	override def south: Position = lowerLeft.newX(centre.x)
+
+	override def add(deltaX: Double, deltaY: Double): RectangleLocation = new RectangleLocation(lowerLeft.add(deltaX, deltaY), upperRight.add(deltaX, deltaY))
 }
 
-trait Shape {
-	def layout(sr: SchematicRuntime): ShapeLayout
+class PointLocation(position: Position) extends Location {
+
+	override def centre: Position = position
+
+	override def se: Position = position
+
+	override def sw: Position = position
+
+	override def west: Position = position
+
+	override def north: Position = position
+
+	override def nw: Position = position
+
+	override def ne: Position = position
+
+	override def east: Position = position
+
+	override def south: Position = position
+
+	override def add(deltaX: Double, deltaY: Double): PointLocation = new PointLocation(position.add(deltaX, deltaY))
 }
 
-trait ShapeLayout {
-	def render(graphics: Graphics2D): Unit
-
-	def location: Location
-}
-
-class BlockShape(val xxstyles: Styles, var origin: (SchematicRuntime => Position) = sr => sr.style.direction.origin(sr)) extends Shape with Operations {
-	val shapes = mutable.MutableList[Shape]()
-
-	override def layout(sr: SchematicRuntime): ShapeLayout = {
-		val layouts = mutable.MutableList[ShapeLayout]()
-		sr.pushLayouts(layouts)
-		for (shape <- shapes) {
-			layouts += shape.layout(sr)
-		}
-		sr.popLayouts()
-
-		new ShapeLayout {
-			val location: Location = layouts.tail.foldLeft(layouts.head.location)((a, b) => new RectangleLocation(a.sw.lowerLeft(b.location.sw), a.ne.upperRight(b.location.ne)))
-
-			override def render(graphics: Graphics2D): Unit = layouts.foreach {
-				_.render(graphics)
-			}
-		}
-	}
-
-	override def styles(): Styles = this.xxstyles
-
-	override def addShape(shape: Shape): Shape = {
-		shapes += shape
-		shape
-	}
-}
-
-class BoxShape(var title: String, var width: Double, var height: Double, var textHeight: Double, var origin: (SchematicRuntime => Position) = sr => sr.style.direction.origin(sr)) extends Shape {
-	def width(width: Int): BoxShape = {
-		this.width = width
-		this
-	}
-
-	override def layout(sr: SchematicRuntime): ShapeLayout = {
-		val lowerLeft: Position = sr.style.direction match {
-			case Up() => origin(sr).add(-width / 2, 0)
-			case Down() => origin(sr).add(-width / 2, -height)
-			case Left() => origin(sr).add(-width, -height / 2)
-			case Right() => origin(sr).add(0, -height / 2)
-		}
-
-		new ShapeLayout {
-			val location = new RectangleLocation(lowerLeft, lowerLeft.add(width, height))
-
-			override def render(graphics: Graphics2D): Unit = {
-				graphics.setPaint(Color.black)
-				graphics.drawRect(location.sw.x.toInt, location.sw.y.toInt, width.toInt, height.toInt)
-				val font = new Font("Arial", Font.PLAIN, textHeight.toInt)
-				graphics.setFont(font)
-				val fontMetrics = graphics.getFontMetrics
-				val stringWidth = fontMetrics.stringWidth(title)
-				val stringHeight = fontMetrics.getAscent
-				graphics.setPaint(Color.black)
-				graphics.drawString(title, (location.centre.x - stringWidth / 2).toInt, (location.centre.y + stringHeight / 2).toInt)
-			}
-		}
-	}
-}
-
-class ArrowShape(var origin: (SchematicRuntime => Position) = sr => sr.style.direction.origin(sr)) extends Shape {
-	override def layout(sr: SchematicRuntime): ShapeLayout = {
-		val sourcePoint = origin(sr)
-		val endPoint = sr.style.direction match {
-			case Up() => sourcePoint.add(0, sr.style.moveHeight)
-			case Down() => sourcePoint.add(0, -sr.style.moveHeight)
-			case Left() => sourcePoint.add(-sr.style.moveWidth, 0)
-			case Right() => sourcePoint.add(sr.style.moveWidth, 0)
-		}
-
-		new ShapeLayout {
-			val location: Location = new RectangleLocation(sourcePoint, endPoint)
-
-			override def render(graphics: Graphics2D): Unit = {
-				graphics.setPaint(Color.black)
-				graphics.drawLine(sourcePoint.x.toInt, sourcePoint.y.toInt, endPoint.x.toInt, endPoint.y.toInt)
-			}
-		}
-	}
-}
-
-class DirectionShape(val direction: Direction) extends Shape {
-	override def layout(sr: SchematicRuntime): ShapeLayout = {
-		sr.style.direction = direction
-		new ShapeLayout {
-			val location: Location = sr.last
-
-			override def render(graphics: Graphics2D): Unit = ()
-		}
-	}
-}
-
-object Tester {
-	def main(args: Array[String]) {
-		val i = new Image()
-		i.right()
-		i.box(title = "Hello", width = 150.0)
-		i.arrow()
-
-		val b = i.block()
-		b.down()
-		b.box("in", width = 75.0)
-		b.arrow()
-		b.box("the", width = 150.0)
-		b.arrow()
-		b.box("box", width = 75.0)
-
-		i.right()
-		i.arrow()
-		i.box("World")
-		i.down()
-		i.arrow()
-		i.box("Bye bye love")
-
-		i.draw()
-	}
-}

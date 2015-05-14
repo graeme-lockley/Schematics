@@ -14,7 +14,7 @@ trait ShapeLayout {
 	def location: Location
 }
 
-class BlockShape(val blockStyles: Styles, var origin: (SchematicRuntime => Position) = sr => sr.style.direction.origin(sr), val translate: (Location => Location) = blockLocation => blockLocation.add(blockLocation.width / 2, -blockLocation.height / 2)) extends Shape with Operations {
+class BlockShape(val blockStyles: Styles, var origin: (SchematicRuntime => Position) = sr => sr.style.direction.origin(sr), val translate: (Location => Location) = blockLocation => blockLocation.add(blockLocation.width / 2, blockLocation.height / 2)) extends Shape with Operations {
 	val shapes = mutable.MutableList[Shape]()
 
 	override def layout(sr: SchematicRuntime): ShapeLayout = {
@@ -25,27 +25,32 @@ class BlockShape(val blockStyles: Styles, var origin: (SchematicRuntime => Posit
 			layouts += shape.layout(sr)
 		}
 		sr.popLayouts()
-		val blockLocation: Location = layouts.tail.foldLeft(layouts.head.location)((a, b) => new RectangleLocation(a.sw.lowerLeft(b.location.sw), a.ne.upperRight(b.location.ne)))
+		val blockLocation: Location = layouts.tail.foldLeft(layouts.head.location)((a, b) => new RectangleLocation(a.nw.upperLeft(b.location.nw), a.se.lowerRight(b.location.se)))
 
 		new ShapeLayout {
 			val location: Location = translate(blockLocation)
-			val newOrigin = Position(location.width / 2, -location.height / 2)
+			//			val newOrigin = Position(location.width / 2, location.height / 2)
+			val newOrigin = sr.style.direction match {
+				case Right() => Position(layouts.head.location.west.x, layouts.head.location.west.y)
+				case Left() => Position(layouts.head.location.east.x, layouts.head.location.east.y)
+				case Down() => Position(layouts.head.location.north.x, layouts.head.location.north.y)
+				case Up() => Position(layouts.head.location.south.x, layouts.head.location.south.y)
+			}
 
 			override def render(graphics: Graphics2D): Unit = {
-				println(s"translating (${location.sw.x.toInt})")
-				graphics.translate(newOrigin.x.toInt, newOrigin.y.toInt)
+				graphics.translate(-(blockLocation.nw.x - location.nw.x).toInt, -(blockLocation.nw.y - location.nw.y).toInt)
 
 				graphics.setPaint(Color.black)
 				val currentStroke = graphics.getStroke
 				graphics.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, Array[Float](10.0f), 0.0f))
-				graphics.drawRect(blockLocation.sw.x.toInt, blockLocation.sw.y.toInt, (blockLocation.ne.x - blockLocation.sw.x).toInt, (blockLocation.ne.y - blockLocation.sw.y).toInt)
+				graphics.drawRect(blockLocation.nw.x.toInt, blockLocation.nw.y.toInt, (blockLocation.ne.x - blockLocation.sw.x).toInt, (blockLocation.sw.y - blockLocation.ne.y).toInt)
 				graphics.setStroke(currentStroke)
 
-				println(s"block: original: ${blockLocation.sw} - ${blockLocation.ne}  normalized: ${location.sw} - ${location.ne}")
+				println(s"block: original: ${blockLocation.nw} - ${blockLocation.se}  normalized: ${location.nw} - ${location.se}")
 				layouts.foreach {
 					_.render(graphics)
 				}
-				graphics.translate(-newOrigin.x.toInt, -newOrigin.y.toInt)
+				graphics.translate((blockLocation.nw.x - location.nw.x).toInt, (blockLocation.nw.y - location.nw.y).toInt)
 			}
 		}
 	}
@@ -77,7 +82,7 @@ class BoxShape(var title: String, var width: Double, var height: Double, var tex
 
 			override def render(graphics: Graphics2D): Unit = {
 				graphics.setPaint(Color.black)
-				graphics.drawRect(location.sw.x.toInt, location.sw.y.toInt, width.toInt, height.toInt)
+				graphics.drawRect(location.nw.x.toInt, location.nw.y.toInt, width.toInt, height.toInt)
 				val font = new Font("Arial", Font.PLAIN, textHeight.toInt)
 				graphics.setFont(font)
 				val fontMetrics = graphics.getFontMetrics
@@ -85,8 +90,9 @@ class BoxShape(var title: String, var width: Double, var height: Double, var tex
 				val stringHeight = fontMetrics.getAscent
 				graphics.setPaint(Color.black)
 				graphics.drawString(title, (location.centre.x - stringWidth / 2).toInt, (location.centre.y + stringHeight / 2).toInt)
+				graphics.drawRect((location.centre.x - stringWidth / 2).toInt, (location.centre.y - stringHeight / 2).toInt, stringWidth, stringHeight)
 
-				println(s"box: ${location.sw} - ${location.ne}: $title")
+				println(s"box: ${location.nw} - ${location.se}: $title (${(location.centre.x - stringWidth / 2).toInt}, ${(location.centre.y - stringHeight / 2).toInt})")
 			}
 		}
 	}

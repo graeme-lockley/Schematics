@@ -47,9 +47,9 @@ case class Position(x: Double, y: Double) {
 
 	def midPoint(other: Position): Position = Position((x + other.x) / 2, (y + other.y) / 2)
 
-	def lowerLeft(other: Position): Position = Position(Math.min(x, other.x), Math.min(y, other.y))
+	def upperLeft(other: Position): Position = Position(Math.min(x, other.x), Math.min(y, other.y))
 
-	def upperRight(other: Position): Position = Position(Math.max(x, other.x), Math.max(y, other.y))
+	def lowerRight(other: Position): Position = Position(Math.max(x, other.x), Math.max(y, other.y))
 }
 
 trait Location {
@@ -79,28 +79,28 @@ trait Location {
 }
 
 class RectangleLocation(positionA: Position, positionB: Position) extends Location {
-	val lowerLeft = positionA.lowerLeft(positionB)
-	val upperRight = positionA.upperRight(positionB)
+	val upperLeft = positionA.upperLeft(positionB)
+	val lowerRight = positionA.lowerRight(positionB)
 
-	override def centre: Position = lowerLeft.midPoint(upperRight)
+	override def centre: Position = upperLeft.midPoint(lowerRight)
 
-	override def se: Position = upperRight.newY(lowerLeft.y)
+	override def se: Position = lowerRight
 
-	override def sw: Position = lowerLeft
+	override def sw: Position = lowerRight.newX(upperLeft.x)
 
-	override def west: Position = lowerLeft.newY(centre.y)
+	override def west: Position = upperLeft.newY(centre.y)
 
-	override def north: Position = upperRight.newX(centre.x)
+	override def north: Position = upperLeft.newX(centre.x)
 
-	override def nw: Position = upperRight.newX(lowerLeft.x)
+	override def nw: Position = upperLeft
 
-	override def ne: Position = upperRight
+	override def ne: Position = upperLeft.newX(lowerRight.x)
 
-	override def east: Position = upperRight.newY(centre.y)
+	override def east: Position = lowerRight.newY(centre.y)
 
-	override def south: Position = lowerLeft.newX(centre.x)
+	override def south: Position = lowerRight.newX(centre.x)
 
-	override def add(deltaX: Double, deltaY: Double): RectangleLocation = new RectangleLocation(lowerLeft.add(deltaX, deltaY), upperRight.add(deltaX, deltaY))
+	override def add(deltaX: Double, deltaY: Double): RectangleLocation = new RectangleLocation(upperLeft.add(deltaX, deltaY), lowerRight.add(deltaX, deltaY))
 }
 
 class PointLocation(position: Position) extends Location {
@@ -125,4 +125,3 @@ class PointLocation(position: Position) extends Location {
 
 	override def add(deltaX: Double, deltaY: Double): PointLocation = new PointLocation(position.add(deltaX, deltaY))
 }
-

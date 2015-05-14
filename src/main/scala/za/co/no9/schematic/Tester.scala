@@ -3,14 +3,14 @@ package za.co.no9.schematic
 object Tester {
 	def main(args: Array[String]) {
 		val i = new Image()
-		i.up()
-		i.box(title = "A", width = 100.0)
+
+		i.down()
 		i.box(title = "B", width = 100.0)
 		i.right()
 		i.arrow()
 
 		val b = i.block()
-		b.up()
+		b.down()
 		b.box("C", width = 100.0)
 		b.arrow()
 		b.box("D", width = 100.0)
@@ -18,9 +18,6 @@ object Tester {
 		i.right()
 		i.arrow()
 		i.box("E")
-		i.up()
-		i.arrow()
-		i.box("F")
 
 		i.draw()
 	}

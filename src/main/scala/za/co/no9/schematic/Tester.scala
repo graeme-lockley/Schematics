@@ -10,7 +10,7 @@ object Tester {
 		i.arrow()
 
 		val b = i.block()
-		b.down()
+		b.up()
 		b.box("C", width = 100.0)
 		b.arrow()
 		b.box("D", width = 100.0)

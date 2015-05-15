@@ -6,39 +6,45 @@ import java.io.File
 import javax.imageio.ImageIO
 
 class Image extends Operations {
-	val blockShape = new BlockShape(blockStyles = new Styles(), translate = location => location.add(-location.nw.x, -location.nw.y))
+  val blockShape = new BlockShape(blockStyles = new Styles(), translate = location => location.add(-location.nw.x, -location.nw.y))
 
-	override protected def addShape(shape: Shape): Shape = blockShape.addShape(shape)
+  override protected def addShape(shape: Shape): Shape = blockShape.addShape(shape)
 
-	override protected def styles(): Styles = blockShape.styles()
+  override protected def styles(): Styles = blockShape.styles()
 
-	def draw(): Unit = {
-		val width = 600
-		val height = 400
+  def draw(writeImage: BufferedImage => Unit = bi => ImageIO.write(bi, "PNG", new File("bob.png"))): Unit = {
+    val width = 600
+    val height = 400
 
-		val layouts = collection.mutable.MutableList[ShapeLayout]()
-		val schematicRuntime = new SchematicRuntime(styles())
-		schematicRuntime.pushLayouts(layouts)
+    val shapeLayout = layoutImage()
 
-		val shapeLayout = blockShape.layout(schematicRuntime)
+    val renderWidth = 2 + shapeLayout.location.ne.x - shapeLayout.location.sw.x
+    val renderHeight = 2 + shapeLayout.location.sw.y - shapeLayout.location.ne.y
+    println(renderWidth)
+    println(renderHeight)
+    val renderBI = new BufferedImage(renderWidth.toInt, renderHeight.toInt, BufferedImage.TYPE_INT_ARGB)
+    //		val renderBI = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
+    val renderGraphics = renderBI.createGraphics()
+    renderGraphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
+    println(shapeLayout.location.nw)
 
-		schematicRuntime.popLayouts()
+    //		schematicRuntime.style.origin = Position(-shapeLayout.location.sw.x, -shapeLayout.location.sw.y)
+    //		renderGraphics.translate(schematicRuntime.style.origin.x, schematicRuntime.style.origin.y)
 
-		val renderWidth = 2 + shapeLayout.location.ne.x - shapeLayout.location.sw.x
-		val renderHeight = 2 + shapeLayout.location.sw.y - shapeLayout.location.ne.y
-		println(renderWidth)
-		println(renderHeight)
-		val renderBI = new BufferedImage(renderWidth.toInt, renderHeight.toInt, BufferedImage.TYPE_INT_ARGB)
-		//		val renderBI = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
-		val renderGraphics = renderBI.createGraphics()
-		renderGraphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
-		println(shapeLayout.location.nw)
+    shapeLayout.render(renderGraphics)
 
-		//		schematicRuntime.style.origin = Position(-shapeLayout.location.sw.x, -shapeLayout.location.sw.y)
-		//		renderGraphics.translate(schematicRuntime.style.origin.x, schematicRuntime.style.origin.y)
+    writeImage(renderBI)
+  }
 
-		shapeLayout.render(renderGraphics)
+  def layoutImage() = {
+    val layouts = collection.mutable.MutableList[ShapeLayout]()
+    val schematicRuntime = new SchematicRuntime(styles())
+    schematicRuntime.pushLayouts(layouts)
 
-		ImageIO.write(renderBI, "PNG", new File("bob.png"))
-	}
+    val shapeLayout = blockShape.layout(schematicRuntime)
+
+    schematicRuntime.popLayouts()
+
+    shapeLayout
+  }
 }

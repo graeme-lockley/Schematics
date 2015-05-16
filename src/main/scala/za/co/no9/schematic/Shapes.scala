@@ -16,7 +16,8 @@ trait ShapeLayout {
   def embeddedLayouts: List[ShapeLayout]
 }
 
-class BlockShape(val blockStyles: Styles, var origin: (SchematicRuntime => Position) = sr => sr.style.direction.origin(sr), val translate: (Location => Location) = blockLocation => blockLocation.add(blockLocation.width / 2, blockLocation.height / 2)) extends Shape with Operations {
+// TODO fix translate to consider direction
+class BlockShape(val blockStyles: Styles, var origin: (SchematicRuntime => Position) = sr => sr.style.direction.origin(sr), val translate: ((SchematicRuntime, Location) => Location) = defaultBlockShapeTranslation) extends Shape with Operations {
   val shapes = mutable.MutableList[Shape]()
 
   override def layout(sr: SchematicRuntime): ShapeLayout = {
@@ -30,8 +31,7 @@ class BlockShape(val blockStyles: Styles, var origin: (SchematicRuntime => Posit
     val blockLocation: Location = layouts.tail.foldLeft(layouts.head.location)((a, b) => new RectangleLocation(a.nw.upperLeft(b.location.nw), a.se.lowerRight(b.location.se)))
 
     new ShapeLayout {
-      val location: Location = translate(blockLocation)
-      //			val newOrigin = Position(location.width / 2, location.height / 2)
+      val location: Location = translate(sr, blockLocation)
       val newOrigin = sr.style.direction match {
         case Right() => Position(layouts.head.location.west.x, layouts.head.location.west.y)
         case Left() => Position(layouts.head.location.east.x, layouts.head.location.east.y)

@@ -4,20 +4,21 @@ object Tester {
 	def main(args: Array[String]) {
 		val i = new Image()
 
-		i.down()
-		i.box(title = "B", width = 100.0)
-		i.right()
-		i.arrow()
+		i.up() // 0
+		i.box(title = "A", width = 100.0) // 1
+		i.right() // 2
+		i.arrow() // 3
 
-		val b = i.block()
-		b.up()
-		b.box("C", width = 100.0)
-		b.arrow()
-		b.box("D", width = 100.0)
+		val b = i.block() // 4
+		// b.point // 4.0
+		b.up() // 4.1
+		b.box(title = "B", width = 100.0) // 4.2
+		b.arrow() // 4.3
+		b.box(title = "C", width = 100.0) // 4.4
 
-		i.right()
-		i.arrow()
-		i.box("E")
+		i.right() // 5
+		i.arrow() // 6
+		i.box(title = "D") // 7
 
 		i.draw()
 	}

@@ -6,7 +6,7 @@ import java.io.File
 import javax.imageio.ImageIO
 
 class Image extends Operations {
-  val blockShape = new BlockShape(blockStyles = new Styles(), translate = location => location.add(-location.nw.x, -location.nw.y))
+  val blockShape = new BlockShape(blockStyles = new Styles(), translate = (sr, location) => location.add(-location.nw.x, -location.nw.y))
 
   override protected def addShape(shape: Shape): Shape = blockShape.addShape(shape)
 

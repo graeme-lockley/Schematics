@@ -8,4 +8,5 @@ class Styles {
 	var textHeight: Double = 15.0
 	var origin: Position = Position(0.0, 0.0)
 	var direction: Direction = Right()
+	var rotation: Double = 0.0
 }

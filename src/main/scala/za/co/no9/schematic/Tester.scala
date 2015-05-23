@@ -5,7 +5,7 @@ object Tester {
 		val i = new Image()
 
 		i.up() // 0
-		i.box(title = "A", width = 100.0) // 1
+		i.box(title = "A\nB", width = 100.0) // 1
 		i.right() // 2
 		i.arrow() // 3
 
@@ -48,4 +48,27 @@ object Tester {
 
 		i.draw()
 	}
+
+	/*
+		box "Text within body" width=500 height=30 [
+			box "Small text" fontsize=5 rotate=270
+		];
+		down;
+		box "Text within body" width=500 height=30 [
+			box "Small text" fontsize=5 rotate=270
+		];
+		down;
+		box "Text within body" width=500 height=30 [
+			box "Small text" fontsize=5 rotate=270
+		];
+
+		val i = new Image()
+		i.box(title = "Text within body", width=500, height=30 elements=(b:Box) => List(b.box(text = "Small text", fontsize = 9, rotate=270)))
+		i.down()
+		i.box(title = "Text within body", width=500, height=30 elements=(b:Box) => List(b.box(text = "Small text", fontsize = 9, rotate=270)))
+		i.down()
+		i.box(title = "Text within body", width=500, height=30 elements=(b:Box) => List(b.box(text = "Small text", fontsize = 9, rotate=270)))
+
+		i.draw()
+	 */
 }

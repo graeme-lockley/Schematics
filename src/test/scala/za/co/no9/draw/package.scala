@@ -1,7 +1,5 @@
 package za.co.no9
 
-import java.awt.Graphics2D
-
 package object draw {
 	def rectangleEquals(rectangleA: Rectangle, rectangleB: Rectangle, theta: Double): Boolean = pointEquals(rectangleA.topLeft, rectangleB.topLeft, theta) && pointEquals(rectangleA.bottomRight, rectangleB.bottomRight, theta)
 
@@ -17,11 +15,11 @@ package object draw {
 
 		override def grips: Grips = new RectangleGrips(Point(0, 0), Point(0, 0))
 
-		override def render(g: Graphics2D): Unit = ()
+		override def render(canvas: Canvas): Unit = ()
 
 		override def nestedShapes: List[LayedOutShape] = List()
 
-		override val name: Option[String] = Option.empty
+		override val name: String = "_"
 		override val previous: Option[LayedOutShape] = Option.empty
 	}
 }

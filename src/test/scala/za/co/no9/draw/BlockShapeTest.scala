@@ -45,4 +45,15 @@ class BlockShapeTest extends FlatSpec with PropertyChecks with Matchers {
 		assert(pointEquals(layedOutShape.boundingRectangle.topLeft, Point(40.0, 12.6795), theta))
 		assert(pointEquals(layedOutShape.boundingRectangle.bottomRight, Point(50.0 + 20.0 * Math.sin(Math.toRadians(30.0)) + 440.0 * Math.cos(Math.toRadians(30.0)), 30.0 + 20.0 * Math.cos(Math.toRadians(30.0)) + 440.0 * Math.sin(Math.toRadians(30.0))), theta))
 	}
+
+	"Given a block with nested blocks" should "be able to locate and orientate based on last names" in {
+		val shape = new BlockShape(
+			List(
+				new BoxShape(List(), layoutPoint = (previous: LayedOutShape) => LayoutPoint(NorthWest(), At(previous.last("top").get.grips.nw, Point(0, 0))), width = 100, height = 20, name = "boxA"),
+				new BoxShape(List(), layoutPoint = (previous: LayedOutShape) => LayoutPoint(West(), At(previous.last("boxA").get.grips.east, Point(20, 0))), width = 100, height = 20, name = "boxB")),
+			layoutPoint = (previous: LayedOutShape) => LayoutPoint(West(), At(Point(0, 0), Point(0, 0))),
+			name = "top")
+		val ls = new LayoutState(rotation = 30.0, scale = 2.0, translation = Point(0, 0))
+		shape.layout(initialLayedOutShape, ls)
+	}
 }

@@ -1,7 +1,5 @@
 package za.co.no9.draw
 
-import java.awt.Graphics2D
-
 trait Shape {
 	def nestedShapes: List[Shape]
 
@@ -15,14 +13,14 @@ trait LayedOutShape {
 
 	def grips: Grips
 
-	def render(g: Graphics2D): Unit
+	def render(canvas: Canvas): Unit
 
 	val previous: Option[LayedOutShape]
 
-	val name: Option[String]
+	val name: String
 
 	def last(back: Int): Option[LayedOutShape] = if (back <= 0) Option(this) else previous.flatMap(_.last(back - 1))
 
-	def last(name: String): Option[LayedOutShape] = if (name.equals(this.name.getOrElse(""))) Option(this) else previous.flatMap(_.last(name))
+	def last(name: String): Option[LayedOutShape] = if (name.equals(this.name)) Option(this) else previous.flatMap(_.last(name))
 }
 

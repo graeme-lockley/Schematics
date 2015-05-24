@@ -49,5 +49,4 @@ class BoxShapeTest extends FlatSpec with PropertyChecks with Matchers {
 		assert(rectangleEquals(boxALayedOut.boundingRectangle, BoundedRectangle(Point(50.0, 40.0), Point(150.0, 60.0)), theta))
 		assert(rectangleEquals(boxBLayedOut.boundingRectangle, BoundedRectangle(Point(170.0, 40.0), Point(270.0, 60.0)), theta))
 	}
-
 }

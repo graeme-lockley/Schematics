@@ -7,7 +7,7 @@ object Tester {
 				new BoxShape(List(), layoutPoint = (previous: LayedOutShape) => LayoutPoint(West(), At(Point(0, 0), Point(0, 0))), width = 100, height = 20),
 				new BoxShape(List(), layoutPoint = (previous: LayedOutShape) => LayoutPoint(West(), At(previous.last(0).get.grips.east, Point(0, 0))), width = 20, height = 5),
 				new BoxShape(List(), layoutPoint = (previous: LayedOutShape) => LayoutPoint(West(), At(previous.last(0).get.grips.east, Point(0, 0))), width = 100, height = 20),
-				new BoxShape(List(), layoutPoint = (previous: LayedOutShape) => LayoutPoint(North(), At(previous.last(1).get.grips.east, Point(2, 0))), width = 96, height = 15, rotation = 275))
+				new BoxShape(List(), layoutPoint = (previous: LayedOutShape) => LayoutPoint(North(), At(previous.last(1).get.grips.east, Point(2, 0))), width = 96, height = 15, rotation = 275, text = Some(Text("Hello World", fontStyle = Italic()))))
 		).draw("bob.png")
 
 

@@ -41,6 +41,12 @@ case class SouthEast() extends CompassDirection {
 }
 
 trait Grips {
+	def transform(ls: LayoutState) =
+		DiscreteGrips(
+			ls.transform(nw), ls.transform(north), ls.transform(ne),
+			ls.transform(west), ls.transform(centre), ls.transform(east),
+			ls.transform(sw), ls.transform(south), ls.transform(se))
+
 	def centre: Point
 
 	def north: Point
@@ -92,27 +98,11 @@ class RectangleGrips(positionA: Point, positionB: Point) extends Grips {
 
 	def add(deltaX: Double, deltaY: Double): RectangleGrips = new RectangleGrips(topLeft.add(deltaX, deltaY), bottomRight.add(deltaX, deltaY))
 
-	override def boundedRectangle: Rectangle = {
-		val topLeftPoint = topLeft
-		val bottomRightPoint = bottomRight
-
-		new Rectangle {
-			override val topLeft: Point = topLeftPoint
-			override val bottomRight: Point = bottomRightPoint
-		}
-	}
+	override def boundedRectangle: Rectangle = BoundedRectangle(topLeft, bottomRight)
 }
 
 case class DiscreteGrips(nw: Point, north: Point, ne: Point, west: Point, centre: Point, east: Point, sw: Point, south: Point, se: Point) extends Grips {
-	override def boundedRectangle: Rectangle = {
-		val topLeftPoint = topLeft
-		val bottomRightPoint = bottomRight
-
-		new Rectangle {
-			override val topLeft: Point = topLeftPoint
-			override val bottomRight: Point = bottomRightPoint
-		}
-	}
+	override def boundedRectangle: Rectangle = BoundedRectangle(topLeft, bottomRight)
 
 	def topLeft = nw.topLeft(north.topLeft(ne.topLeft(west.topLeft(centre.topLeft(east.topLeft(sw.topLeft(south.topLeft(se))))))))
 

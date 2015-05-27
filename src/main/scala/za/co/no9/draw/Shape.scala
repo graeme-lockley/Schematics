@@ -11,6 +11,8 @@ trait LayedOutShape {
 
 	def boundingRectangle: Rectangle
 
+	def normalisedBoundedRectangle: Rectangle
+
 	def grips: Grips
 
 	def render(canvas: Canvas): Unit

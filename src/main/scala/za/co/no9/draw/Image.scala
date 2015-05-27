@@ -18,6 +18,8 @@ case class Image(nestedShapes: List[Shape]) {
 	def initialLayedOutShape: LayedOutShape = new LayedOutShape {
 		override def boundingRectangle: Rectangle = PointRectangle(Point(0, 0))
 
+		override def normalisedBoundedRectangle: Rectangle = PointRectangle(Point(0, 0))
+
 		override def grips: Grips = new RectangleGrips(Point(0, 0), Point(0, 0))
 
 		override def render(canvas: Canvas): Unit = ()
@@ -27,5 +29,4 @@ case class Image(nestedShapes: List[Shape]) {
 		override val name: String = "_"
 		override val previous: Option[LayedOutShape] = Option.empty
 	}
-
 }

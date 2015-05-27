@@ -19,7 +19,8 @@ case class LayoutState(tx: AffineTransform, rotation: Double, scale: Double, tra
 	}
 
 	def inverseTransform(point: Point): Point = {
-		val outputPoint = tx.inverseTransform(new Point2D.Double(point.x, point.y), null)
+		val outputPoint = new Point2D.Double(point.x, point.y)
+		tx.inverseTransform(new Point2D.Double(point.x, point.y), outputPoint)
 		Point(outputPoint.getX, outputPoint.getY)
 	}
 

@@ -1,15 +1,15 @@
 package za.co.no9.draw
 
-import java.awt.geom.AffineTransform
+import java.awt.geom.{AffineTransform, Rectangle2D}
 import java.awt.image.{BufferedImage => BI}
-import java.awt.{BasicStroke, Color, Font}
+import java.awt.{BasicStroke, Color, Font, GradientPaint}
 import java.io.File
 import javax.imageio.ImageIO
 
 trait Canvas {
 	def drawText(text: Text, boundingRectangle: Rectangle)
 
-	def drawRectangle(rectangle: Rectangle, lineStyle: Option[LineStyle])
+	def drawRectangle(rectangle: Rectangle, lineStyle: Option[LineStyle], fillStyle: Option[FillStyle])
 
 	def setPaint(colour: Colour)
 
@@ -22,7 +22,17 @@ class BufferedImage(dimension: Rectangle, boundary: Double = 2.0, scale: Int = 5
 
 	def toColor(colour: Colour): Color = new Color(colour.r, colour.g, colour.b)
 
-	override def drawRectangle(rectangle: Rectangle, lineStyle: Option[LineStyle]) = {
+	override def drawRectangle(rectangle: Rectangle, lineStyle: Option[LineStyle], fillStyle: Option[FillStyle]) = {
+		if (fillStyle.isDefined) {
+			fillStyle.get match {
+				case SolidFillStyle(colour) => setPaint(colour)
+				case GradientFillStyle(startColour, endColour) =>
+					val redtowhite = new GradientPaint(rectangle.topLeft.x.toFloat, rectangle.topLeft.y.toFloat, toColor(startColour), rectangle.bottomRight.x.toFloat, rectangle.bottomRight.y.toFloat, toColor(endColour))
+					graphics.setPaint(redtowhite);
+			}
+			graphics.fill(new Rectangle2D.Double(rectangle.topLeft.x, rectangle.topLeft.y, rectangle.width, rectangle.height))
+		}
+
 		if (lineStyle.isDefined) {
 			val stroke = new BasicStroke(lineStyle.get.width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f)
 			graphics.setStroke(stroke)

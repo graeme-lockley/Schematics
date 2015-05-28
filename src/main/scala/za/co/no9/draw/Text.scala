@@ -10,4 +10,6 @@ case class Italic() extends FontStyle(2)
 
 case class BoldItalic() extends FontStyle(3)
 
-case class Text(content: String, fontName: String = "Helvetica", fontSize: Int = 10, fontStyle: FontStyle = Plain(), orientation: CompassDirection = Centre())
+case class TextStyle(name: String = "Helvetica", size: Int = 10, style: FontStyle = Plain(), orientation: CompassDirection = Centre(), colour: Colour = BLACK)
+
+case class Text(content: String, style: TextStyle = TextStyle())

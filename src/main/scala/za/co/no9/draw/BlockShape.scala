@@ -2,7 +2,7 @@ package za.co.no9.draw
 
 import scala.collection.mutable
 
-class BlockShape(val nestedShapes: List[Shape], val layoutPoint: LayedOutShape => LayoutPoint, val rotation: Double = 0.0, val text: Option[Text] = None, val name: String = "_") extends Shape {
+class BlockShape(val nestedShapes: List[Shape] = List(), val layoutPoint: LayedOutShape => LayoutPoint, val rotation: Double = 0.0, val text: Option[Text] = None, val lineStyle: Option[LineStyle] = None, val name: String = "_") extends Shape {
 	override def layout(previous: LayedOutShape, layoutState: LayoutState): LayedOutShape = {
 		val ls = layoutState.absoluteTranslate(Point(0, 0)).absoluteRotation(0.0)
 

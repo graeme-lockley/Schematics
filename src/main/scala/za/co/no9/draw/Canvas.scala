@@ -13,6 +13,8 @@ trait Canvas {
 
 	def setPaint(colour: Colour)
 
+	def setLineStyle(lineStyle: LineStyle)
+
 	def setTransform(tx: AffineTransform)
 }
 
@@ -34,10 +36,7 @@ class BufferedImage(dimension: Rectangle, boundary: Double = 2.0, scale: Int = 5
 		}
 
 		if (lineStyle.isDefined) {
-			val stroke = new BasicStroke(lineStyle.get.width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f)
-			graphics.setStroke(stroke)
-			setPaint(lineStyle.get.colour)
-
+			setLineStyle(lineStyle.get)
 			graphics.drawRect(rectangle.topLeft.x.toInt, rectangle.topLeft.y.toInt, rectangle.width.toInt, rectangle.height.toInt)
 		}
 	}
@@ -51,6 +50,16 @@ class BufferedImage(dimension: Rectangle, boundary: Double = 2.0, scale: Int = 5
 	}
 
 	override def setPaint(colour: Colour) = graphics.setPaint(toColor(colour))
+
+	override def setLineStyle(lineStyle: LineStyle) = {
+		if (lineStyle.dashes.isEmpty) {
+			graphics.setStroke(new BasicStroke(lineStyle.width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f))
+		} else {
+			graphics.setStroke(new BasicStroke(lineStyle.width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, lineStyle.dashes.toArray, 0.0f))
+		}
+
+		setPaint(lineStyle.colour)
+	}
 
 	override def drawText(text: Text, boundingRectangle: Rectangle) = {
 		val font = new Font(text.style.name, text.style.style.code, text.style.size)

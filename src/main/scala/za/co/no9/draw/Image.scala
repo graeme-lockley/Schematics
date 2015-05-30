@@ -12,7 +12,7 @@ case class Image(nestedShapes: List[Shape]) {
 
 		layedOutShape.render(canvas)
 
-		canvas.write("PNG", "bob.png")
+		canvas.write("PNG", fileName)
 	}
 
 	def initialLayedOutShape: LayedOutShape = new LayedOutShape {

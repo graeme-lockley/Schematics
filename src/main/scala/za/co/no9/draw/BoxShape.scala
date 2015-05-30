@@ -1,6 +1,6 @@
 package za.co.no9.draw
 
-class BoxShape(override val nestedShapes: List[Shape] = List(), override val layoutPoint: LayedOutShape => LayoutPoint, val width: Double, val height: Double, override val rotation: Double = 0.0, override val text: Option[Text] = None, override val lineStyle: Option[LineStyle] = Some(LineStyle(width = 1.0f, colour = BLACK)), override val fillStyle: Option[FillStyle] = None, override val name: String = "_") extends BlockShape(nestedShapes, layoutPoint, rotation, text, lineStyle, fillStyle, name) {
+class BoxShape(override val nestedShapes: List[Shape] = List(), override val layoutPoint: LayedOutShape => LayoutPoint, val width: Double, val height: Double, override val rotation: Double = 0.0, override val text: Option[Text] = None, override val lineStyle: Option[LineStyle] = Some(LineStyle(width = 1.0f, colour = Colour(0, 0, 0))), override val fillStyle: Option[FillStyle] = None, override val name: String = "_") extends BlockShape(nestedShapes, layoutPoint, rotation, text, lineStyle, fillStyle, name) {
 	override def shapeGrips(nestedLayedOutShapes: List[LayedOutShape], ls: LayoutState): DiscreteGrips = {
 		DiscreteGrips(
 			ls.transform(Point(0, 0)), ls.transform(Point(width / 2, 0)), ls.transform(Point(width, 0)),

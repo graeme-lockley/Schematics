@@ -14,7 +14,7 @@ package object draw {
 
 	def doubleEquals(x1: Double, x2: Double, theta: Double): Boolean = Math.abs(x1 - x2) < theta
 
-	def initialLayedOutShape: LayedOutShape = new LayedOutShape with UsableLayedOutShape {
+	def initialLayedOutShape: LaidOutShape = new LaidOutShape with UsableLaidOutShape {
 		override def __ls = new LayoutState(rotation = 0.0, scale = 1.0, translation = Point(0, 0))
 
 		override def realBoundedRectangle: Rectangle = PointRectangle(Point(0, 0))
@@ -25,9 +25,9 @@ package object draw {
 
 		override def render(canvas: Canvas): Unit = ()
 
-		override def nestedShapes: List[LayedOutShape] = List()
+		override def nestedShapes: List[LaidOutShape] = List()
 
 		override val name: String = "_test"
-		override val previous: Option[LayedOutShape] = Option.empty
+		override val previous: Option[LaidOutShape] = Option.empty
 	}
 }

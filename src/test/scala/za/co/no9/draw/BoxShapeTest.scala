@@ -7,7 +7,7 @@ class BoxShapeTest extends FlatSpec with PropertyChecks with Matchers {
 	val theta = 0.001
 
 	"Given a default layout state and a box with fixed width and height, no rotation and scale of 1" should "layout the box at absolute(0, 0)" in {
-		val boxShape = new BoxShape(List(), layoutPoint = (previous: LayedOutShape) => LayoutPoint(West(), At(Point(0, 0), Point(0, 0))), width = 100, height = 20)
+		val boxShape = new BoxShape(List(), layoutPoint = (previous: LaidOutShape) => LayoutPoint(West(), At(Point(0, 0), Point(0, 0))), width = 100, height = 20)
 		val ls = new LayoutState(rotation = 0.0, scale = 1.0, translation = Point(0, 0))
 
 		val layedOutShape = boxShape.layout(initialLayedOutShape, ls)
@@ -28,7 +28,7 @@ class BoxShapeTest extends FlatSpec with PropertyChecks with Matchers {
 	}
 
 	"Given a default layout state and a box with fixed width and height, 45 degree rotation around absolute (0,0) and a scale of 2" should "layout the box at absolute (50, 50)" in {
-		val boxShape = new BoxShape(layoutPoint = (previous: LayedOutShape) => LayoutPoint(West(), At(Point(50, 50), Point(0, 0))), width = 100, height = 20)
+		val boxShape = new BoxShape(layoutPoint = (previous: LaidOutShape) => LayoutPoint(West(), At(Point(50, 50), Point(0, 0))), width = 100, height = 20)
 		val ls = new LayoutState(rotation = 45.0, scale = 2.0, translation = Point(0, 0))
 
 		val layedOutShape = boxShape.layout(initialLayedOutShape, ls)
@@ -38,8 +38,8 @@ class BoxShapeTest extends FlatSpec with PropertyChecks with Matchers {
 	}
 
 	"Given a box and a second box which I layout in terms of the first box" should "layout the boxes correctly" in {
-		val boxA = new BoxShape(List(), layoutPoint = (previous: LayedOutShape) => LayoutPoint(West(), At(Point(50, 50), Point(0, 0))), width = 100, height = 20)
-		val boxB = new BoxShape(List(), layoutPoint = (previous: LayedOutShape) => LayoutPoint(West(), At(previous.last(0).get.grips.east, Point(20, 0))), width = 100, height = 20)
+		val boxA = new BoxShape(List(), layoutPoint = (previous: LaidOutShape) => LayoutPoint(West(), At(Point(50, 50), Point(0, 0))), width = 100, height = 20)
+		val boxB = new BoxShape(List(), layoutPoint = (previous: LaidOutShape) => LayoutPoint(West(), At(previous.last(0).get.grips.east, Point(20, 0))), width = 100, height = 20)
 
 		val ls = new LayoutState(rotation = 0.0, scale = 1.0, translation = Point(0, 0))
 
@@ -105,13 +105,13 @@ class BoxShapeTest extends FlatSpec with PropertyChecks with Matchers {
 		assertLayoutShape(layedOutShape.nestedShapes(1).nestedShapes(1), 0, List("boxB.2", "_boxB.2", "boxB.1", "_boxB.1", "_innerBlockShapeB", "innerBlockShapeA", "_innerBlockShapeA", "_outerBlock", "_test"), List("_boxB.2", "_boxB.1", "_innerBlockShapeB", "_innerBlockShapeA", "_outerBlock", "_test"))
 	}
 
-	def assertLayoutShape(layedOutShape: LayedOutShape, nestedShapeLength: Int, previousNames: List[String], lastNames: List[String]): Unit = {
+	def assertLayoutShape(layedOutShape: LaidOutShape, nestedShapeLength: Int, previousNames: List[String], lastNames: List[String]): Unit = {
 		assert(layedOutShape.nestedShapes.length === nestedShapeLength)
 		assertPreviousNames(layedOutShape, previousNames)
 		assertLastNames(layedOutShape, lastNames)
 	}
 
-	def assertPreviousNames(layedOutShape: LayedOutShape, names: List[String]): Unit = names match {
+	def assertPreviousNames(layedOutShape: LaidOutShape, names: List[String]): Unit = names match {
 		case Nil => ()
 		case n :: Nil =>
 			assert(layedOutShape.name === n)
@@ -120,7 +120,7 @@ class BoxShapeTest extends FlatSpec with PropertyChecks with Matchers {
 			assertPreviousNames(layedOutShape.previous.get, ns)
 	}
 
-	def assertLastNames(layedOutShape: LayedOutShape, names: List[String]) = {
+	def assertLastNames(layedOutShape: LaidOutShape, names: List[String]) = {
 		def assertName(n: Int, names: List[String]): Unit = names match {
 			case Nil =>
 				assert(layedOutShape.last(n).isEmpty)

@@ -2,8 +2,8 @@ package za.co.no9.draw
 
 import scala.collection.mutable
 
-class BlockShape(val nestedShapes: List[Shape] = List(), val layoutPoint: LayedOutShape => LayoutPoint, val rotation: Double = 0.0, val text: Option[Text] = None, val lineStyle: Option[LineStyle] = None, val fillStyle: Option[FillStyle] = None, val name: String = "_block") extends Shape {
-	override def layout(previous: LayedOutShape, layoutState: LayoutState): LayedOutShape = {
+class BlockShape(val nestedShapes: List[Shape] = List(), val layoutPoint: LaidOutShape => LayoutPoint, val rotation: Double = 0.0, val text: Option[Text] = None, val lineStyle: Option[LineStyle] = None, val fillStyle: Option[FillStyle] = None, val name: String = "_block") extends Shape {
+	override def layout(previous: LaidOutShape, layoutState: LayoutState): LaidOutShape = {
 		val ls: LayoutState = layoutState.absoluteTranslate(Point(0, 0)).absoluteRotation(0.0)
 
 		val calculatedLayout = layoutShapeContent(previous, ls)
@@ -14,12 +14,12 @@ class BlockShape(val nestedShapes: List[Shape] = List(), val layoutPoint: LayedO
 
 		val targetLayoutState: LayoutState = atPosition.grip.translate(atLayoutState, calculatedGrips)
 
-		val shadowShape: LayedOutShape = blockShadow(previous, targetLayoutState, calculatedGrips.realBoundedRectangle)
+		val shadowShape: LaidOutShape = blockShadow(previous, targetLayoutState, calculatedGrips.realBoundedRectangle)
 		layoutShapeContent(shadowShape, targetLayoutState, calculatedGrips.realBoundedRectangle)
 	}
 
-	protected def blockShadow(previousLayedOutShape: LayedOutShape, ls: LayoutState, shadowBoundedRectangle: Rectangle): LayedOutShape = {
-		new LayedOutShape with UsableLayedOutShape {
+	protected def blockShadow(previousLayedOutShape: LaidOutShape, ls: LayoutState, shadowBoundedRectangle: Rectangle): LaidOutShape = {
+		new LaidOutShape with UsableLaidOutShape {
 			override def __ls = ls
 
 			override def realBoundedRectangle: Rectangle = grips.realBoundedRectangle
@@ -28,17 +28,17 @@ class BlockShape(val nestedShapes: List[Shape] = List(), val layoutPoint: LayedO
 
 			override def render(canvas: Canvas): Unit = ???
 
-			override def nestedShapes: List[LayedOutShape] = ???
+			override def nestedShapes: List[LaidOutShape] = ???
 
 			override def relativeBoundedRectangle: Rectangle = shadowBoundedRectangle
 
 			override val name: String = "_" + BlockShape.this.name
-			override val previous: Option[LayedOutShape] = Some(previousLayedOutShape)
+			override val previous: Option[LaidOutShape] = Some(previousLayedOutShape)
 		}
 	}
 
-	protected def layoutShapeContent(previous: LayedOutShape, ls: LayoutState, normalisedBoundedRectangle: Rectangle = PointRectangle(Point(0, 0))): LayedOutShape = {
-		val nestedLayedOutShapes = mutable.MutableList[LayedOutShape]()
+	protected def layoutShapeContent(previous: LaidOutShape, ls: LayoutState, normalisedBoundedRectangle: Rectangle = PointRectangle(Point(0, 0))): LaidOutShape = {
+		val nestedLayedOutShapes = mutable.MutableList[LaidOutShape]()
 
 		var previousLayoutOutShape = previous
 
@@ -54,7 +54,7 @@ class BlockShape(val nestedShapes: List[Shape] = List(), val layoutPoint: LayedO
 		val shapeName = name
 		val shapeNormalisedBoundedRectangle = normalisedBoundedRectangle
 
-		new LayedOutShape with IgnoredLayedOutShape {
+		new LaidOutShape with IgnoredLaidOutShape {
 			override def __ls = ls
 
 			override def realBoundedRectangle: Rectangle = grips.realBoundedRectangle
@@ -73,13 +73,13 @@ class BlockShape(val nestedShapes: List[Shape] = List(), val layoutPoint: LayedO
 
 			override val name: String = shapeName
 
-			override def nestedShapes: List[LayedOutShape] = nestedLayedOutShapes.toList
+			override def nestedShapes: List[LaidOutShape] = nestedLayedOutShapes.toList
 
-			override val previous: Option[LayedOutShape] = Option(shapePrevious)
+			override val previous: Option[LaidOutShape] = Option(shapePrevious)
 		}
 	}
 
-	def shapeGrips(nestedLayedOutShapes: List[LayedOutShape], ls: LayoutState): Grips = {
+	def shapeGrips(nestedLayedOutShapes: List[LaidOutShape], ls: LayoutState): Grips = {
 		if (nestedShapes.isEmpty)
 			initialLayoutOutShape.grips
 		else
@@ -103,8 +103,8 @@ class BlockShape(val nestedShapes: List[Shape] = List(), val layoutPoint: LayedO
 		}
 	}
 
-	protected def initialLayoutOutShape: LayedOutShape = {
-		new LayedOutShape with UsableLayedOutShape {
+	protected def initialLayoutOutShape: LaidOutShape = {
+		new LaidOutShape with UsableLaidOutShape {
 			override def __ls = new LayoutState(rotation = 0.0, scale = 1.0, translation = Point(0, 0))
 
 			override def realBoundedRectangle: Rectangle = PointRectangle(Point(0, 0))
@@ -115,11 +115,11 @@ class BlockShape(val nestedShapes: List[Shape] = List(), val layoutPoint: LayedO
 
 			override def render(canvas: Canvas): Unit = ()
 
-			override def nestedShapes: List[LayedOutShape] = List()
+			override def nestedShapes: List[LaidOutShape] = List()
 
 			override val name: String = "initialBlock"
 
-			override val previous: Option[LayedOutShape] = Option.empty
+			override val previous: Option[LaidOutShape] = Option.empty
 		}
 	}
 }

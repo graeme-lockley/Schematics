@@ -3,13 +3,13 @@ package za.co.no9.draw
 trait Shape {
 	def nestedShapes: List[Shape]
 
-	def layout(previous: LayedOutShape, layoutState: LayoutState): LayedOutShape
+	def layout(previous: LaidOutShape, layoutState: LayoutState): LaidOutShape
 }
 
-trait LayedOutShape {
+trait LaidOutShape {
 	def __ls: LayoutState
 
-	def nestedShapes: List[LayedOutShape]
+	def nestedShapes: List[LaidOutShape]
 
 	def realBoundedRectangle: Rectangle
 
@@ -21,29 +21,29 @@ trait LayedOutShape {
 
 	val name: String
 
-	val previous: Option[LayedOutShape]
+	val previous: Option[LaidOutShape]
 
-	def last(back: Int): Option[LayedOutShape]
+	def last(back: Int): Option[LaidOutShape]
 
-	def last(name: String): Option[LayedOutShape]
+	def last(name: String): Option[LaidOutShape]
 }
 
-trait UsableLayedOutShape {
-	this: LayedOutShape =>
+trait UsableLaidOutShape {
+	this: LaidOutShape =>
 	val name: String
 
-	val previous: Option[LayedOutShape]
+	val previous: Option[LaidOutShape]
 
-	def last(back: Int): Option[LayedOutShape] = if (back <= 0) Option(this) else previous.flatMap(_.last(back - 1))
+	def last(back: Int): Option[LaidOutShape] = if (back <= 0) Option(this) else previous.flatMap(_.last(back - 1))
 
-	def last(name: String): Option[LayedOutShape] = if (name.equals(this.name)) Option(this) else previous.flatMap(_.last(name))
+	def last(name: String): Option[LaidOutShape] = if (name.equals(this.name)) Option(this) else previous.flatMap(_.last(name))
 }
 
-trait IgnoredLayedOutShape {
-	val previous: Option[LayedOutShape]
+trait IgnoredLaidOutShape {
+	val previous: Option[LaidOutShape]
 
-	def last(back: Int): Option[LayedOutShape] = if (previous.isDefined) previous.get.last(back) else None
+	def last(back: Int): Option[LaidOutShape] = if (previous.isDefined) previous.get.last(back) else None
 
-	def last(name: String): Option[LayedOutShape] = if (previous.isDefined) previous.get.last(name) else None
+	def last(name: String): Option[LaidOutShape] = if (previous.isDefined) previous.get.last(name) else None
 }
 

@@ -2,7 +2,7 @@ package za.co.no9.draw
 
 import java.awt.geom.{AffineTransform, Point2D}
 
-case class LayoutState(tx: AffineTransform, rotation: Double, scale: Double, translation: Point) {
+case class TX(tx: AffineTransform, rotation: Double, scale: Double, translation: Point) {
 	def this(rotation: Double, scale: Double, translation: Point) = this(new AffineTransform(), rotation, scale, translation)
 
 	tx.translate(translation.x, translation.y)
@@ -30,13 +30,13 @@ case class LayoutState(tx: AffineTransform, rotation: Double, scale: Double, tra
 		Point(outputPoint.getX, outputPoint.getY)
 	}
 
-	def translate(point: Point): LayoutState = LayoutState(tx.clone.asInstanceOf[AffineTransform], 0.0, 1.0, point)
+	def translate(point: Point): TX = TX(tx.clone.asInstanceOf[AffineTransform], 0.0, 1.0, point)
 
-	def rotate(angle: Double): LayoutState = LayoutState(tx.clone.asInstanceOf[AffineTransform], angle, 1.0, Point(0.0, 0.0))
+	def rotate(angle: Double): TX = TX(tx.clone.asInstanceOf[AffineTransform], angle, 1.0, Point(0.0, 0.0))
 
 	def absoluteRotation(rotation: Double) = {
 		val newTX = tx.clone.asInstanceOf[AffineTransform]
 		newTX.setToRotation(0.0)
-		LayoutState(newTX, 0.0, 1.0, Point(0.0, 0.0))
+		TX(newTX, 0.0, 1.0, Point(0.0, 0.0))
 	}
 }

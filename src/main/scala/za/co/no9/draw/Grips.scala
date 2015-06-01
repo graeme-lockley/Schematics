@@ -1,47 +1,47 @@
 package za.co.no9.draw
 
 trait CompassDirection {
-	def translate(ls: LayoutState, grips: Grips): LayoutState
+	def translate(ls: TX, grips: Grips): TX
 }
 
 case class NorthWest() extends CompassDirection {
-	override def translate(ls: LayoutState, grips: Grips): LayoutState = ls.translate(grips.nw.invert())
+	override def translate(ls: TX, grips: Grips): TX = ls.translate(grips.nw.invert())
 }
 
 case class North() extends CompassDirection {
-	override def translate(ls: LayoutState, grips: Grips): LayoutState = ls.translate(grips.north.invert())
+	override def translate(ls: TX, grips: Grips): TX = ls.translate(grips.north.invert())
 }
 
 case class NorthEast() extends CompassDirection {
-	override def translate(ls: LayoutState, grips: Grips): LayoutState = ls.translate(grips.ne.invert())
+	override def translate(ls: TX, grips: Grips): TX = ls.translate(grips.ne.invert())
 }
 
 case class West() extends CompassDirection {
-	override def translate(ls: LayoutState, grips: Grips): LayoutState = ls.translate(grips.west.invert())
+	override def translate(ls: TX, grips: Grips): TX = ls.translate(grips.west.invert())
 }
 
 case class Centre() extends CompassDirection {
-	override def translate(ls: LayoutState, grips: Grips): LayoutState = ls.translate(grips.centre.invert())
+	override def translate(ls: TX, grips: Grips): TX = ls.translate(grips.centre.invert())
 }
 
 case class East() extends CompassDirection {
-	override def translate(ls: LayoutState, grips: Grips): LayoutState = ls.translate(grips.east.invert())
+	override def translate(ls: TX, grips: Grips): TX = ls.translate(grips.east.invert())
 }
 
 case class SouthWest() extends CompassDirection {
-	override def translate(ls: LayoutState, grips: Grips): LayoutState = ls.translate(grips.sw.invert())
+	override def translate(ls: TX, grips: Grips): TX = ls.translate(grips.sw.invert())
 }
 
 case class South() extends CompassDirection {
-	override def translate(ls: LayoutState, grips: Grips): LayoutState = ls.translate(grips.south.invert())
+	override def translate(ls: TX, grips: Grips): TX = ls.translate(grips.south.invert())
 }
 
 case class SouthEast() extends CompassDirection {
-	override def translate(ls: LayoutState, grips: Grips): LayoutState = ls.translate(grips.se.invert())
+	override def translate(ls: TX, grips: Grips): TX = ls.translate(grips.se.invert())
 }
 
 trait Grips {
-	def transform(ls: LayoutState) =
+	def transform(ls: TX) =
 		DiscreteGrips(
 			ls.transform(nw), ls.transform(north), ls.transform(ne),
 			ls.transform(west), ls.transform(centre), ls.transform(east),

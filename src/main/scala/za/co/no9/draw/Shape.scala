@@ -3,7 +3,7 @@ package za.co.no9.draw
 trait Shape {
 	def nestedShapes: List[Shape]
 
-	def layout(previous: LaidOutShape, layoutState: LayoutState): LaidOutShape
+	def layout(previous: LaidOutShape, layoutState: TX): LaidOutShape
 }
 
 trait LaidOutShape {

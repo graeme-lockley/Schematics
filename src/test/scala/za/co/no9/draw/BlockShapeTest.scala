@@ -8,7 +8,7 @@ class BlockShapeTest extends FlatSpec with PropertyChecks with Matchers {
 
 	"Given a block with no nested shape" should "still be able to layout without errors" in {
 		val shape = new BlockShape(layoutPoint = _ => LayoutPoint(West(), At(Point(0, 0), Point(0, 0))))
-		val ls = new LayoutState(rotation = 30.0, scale = 2.0, translation = Point(0, 0))
+		val ls = new TX(rotation = 30.0, scale = 2.0, translation = Point(0, 0))
 
 		val layedOutShape = shape.layout(initialLayedOutShape, ls)
 
@@ -22,7 +22,7 @@ class BlockShapeTest extends FlatSpec with PropertyChecks with Matchers {
 				new BoxShape(layoutPoint = _ => LayoutPoint(West(), At(Point(50, 30), Point(0, 0))), width = 100, height = 20),
 				new BoxShape(layoutPoint = p => LayoutPoint(West(), At(p.last(0).get.grips.east, Point(20, 0))), width = 100, height = 20)),
 			layoutPoint = (previous: LaidOutShape) => LayoutPoint(West(), At(Point(0, 0), Point(0, 0))))
-		val ls = new LayoutState(rotation = 0.0, scale = 1.0, translation = Point(0, 0))
+		val ls = new TX(rotation = 0.0, scale = 1.0, translation = Point(0, 0))
 
 		val layedOutShape = shape.layout(initialLayedOutShape, ls)
 
@@ -40,7 +40,7 @@ class BlockShapeTest extends FlatSpec with PropertyChecks with Matchers {
 					, width = 100, height = 20, name = "boxB")),
 			layoutPoint = (previous: LaidOutShape) => LayoutPoint(West(), At(Point(0, 0), Point(0, 0))),
 			name = "block")
-		val ls = new LayoutState(rotation = 30.0, scale = 2.0, translation = Point(0, 0))
+		val ls = new TX(rotation = 30.0, scale = 2.0, translation = Point(0, 0))
 
 		val layedOutShape = shape.layout(initialLayedOutShape, ls)
 

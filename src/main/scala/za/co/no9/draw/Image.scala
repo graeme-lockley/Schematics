@@ -3,14 +3,12 @@ package za.co.no9.draw
 case class Image(nestedShapes: List[Shape]) {
 	def draw(fileName: String): Unit = {
 		val shape = new BlockShape(nestedShapes, layoutPoint = (previous: LaidOutShape) => LayoutPoint(NorthWest(), At(Point(0, 0), Point(0, 0))), name = "top")
-		val ls = new LayoutState(rotation = 0.0, scale = 1.0, translation = Point(0, 0))
+		val tx = new TX(rotation = 0.0, scale = 1.0, translation = Point(0, 0))
 
-		val layedOutShape = shape.layout(initialLayedOutShape, ls)
-		val shapeBoundedRectangle = layedOutShape.realBoundedRectangle
+		val laidOutImage = shape.layout(initialLayedOutShape, tx)
+		val canvas = new BufferedImage(laidOutImage.realBoundedRectangle)
 
-		val canvas = new BufferedImage(shapeBoundedRectangle)
-
-		layedOutShape.render(canvas)
+		laidOutImage.render(canvas)
 
 		canvas.write("PNG", fileName)
 	}

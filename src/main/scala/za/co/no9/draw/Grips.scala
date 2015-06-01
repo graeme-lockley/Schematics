@@ -69,7 +69,7 @@ trait Grips {
 
 	def bottomRight: Point
 
-	def boundedRectangle: Rectangle
+	def realBoundedRectangle: Rectangle
 }
 
 class RectangleGrips(positionA: Point, positionB: Point) extends Grips {
@@ -98,11 +98,13 @@ class RectangleGrips(positionA: Point, positionB: Point) extends Grips {
 
 	def add(deltaX: Double, deltaY: Double): RectangleGrips = new RectangleGrips(topLeft.add(deltaX, deltaY), bottomRight.add(deltaX, deltaY))
 
-	override def boundedRectangle: Rectangle = BoundedRectangle(topLeft, bottomRight)
+	def relativeBoundedRectangle: Rectangle = BoundedRectangle(topLeft, bottomRight)
+
+	override def realBoundedRectangle: Rectangle = BoundedRectangle(topLeft.topLeft(bottomRight), topLeft.bottomRight(bottomRight))
 }
 
 case class DiscreteGrips(nw: Point, north: Point, ne: Point, west: Point, centre: Point, east: Point, sw: Point, south: Point, se: Point) extends Grips {
-	override def boundedRectangle: Rectangle = BoundedRectangle(topLeft, bottomRight)
+	override def realBoundedRectangle: Rectangle = BoundedRectangle(topLeft, bottomRight)
 
 	def topLeft = nw.topLeft(north.topLeft(ne.topLeft(west.topLeft(centre.topLeft(east.topLeft(sw.topLeft(south.topLeft(se))))))))
 

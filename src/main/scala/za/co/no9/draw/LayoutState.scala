@@ -14,9 +14,15 @@ case class LayoutState(tx: AffineTransform, rotation: Double, scale: Double, tra
 		Point(outputPoint.getX, outputPoint.getY)
 	}
 
-	def absoluteTranslate(point: Point) = {
-		translate(inverseTransform(point))
-	}
+	def transform(rectangle: Rectangle): Rectangle = transform(rectangle.grips).realBoundedRectangle
+
+	def transform(grips: Grips): Grips =
+		DiscreteGrips(
+			transform(grips.nw), transform(grips.north), transform(grips.ne),
+			transform(grips.west), transform(grips.centre), transform(grips.east),
+			transform(grips.sw), transform(grips.south), transform(grips.se))
+
+	def absoluteTranslate(point: Point) = translate(inverseTransform(point))
 
 	def inverseTransform(point: Point): Point = {
 		val outputPoint = new Point2D.Double(point.x, point.y)

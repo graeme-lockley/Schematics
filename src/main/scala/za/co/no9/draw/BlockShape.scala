@@ -20,8 +20,6 @@ class BlockShape(val nestedShapes: List[Shape] = List(), val layoutPoint: LaidOu
 
 	protected def blockShadow(previousLayedOutShape: LaidOutShape, ls: LayoutState, shadowBoundedRectangle: Rectangle): LaidOutShape = {
 		new LaidOutShape with UsableLaidOutShape {
-			override def __ls = ls
-
 			override def realBoundedRectangle: Rectangle = grips.realBoundedRectangle
 
 			override def grips: Grips = ls.transform(shadowBoundedRectangle.grips)
@@ -55,8 +53,6 @@ class BlockShape(val nestedShapes: List[Shape] = List(), val layoutPoint: LaidOu
 		val shapeNormalisedBoundedRectangle = normalisedBoundedRectangle
 
 		new LaidOutShape with IgnoredLaidOutShape {
-			override def __ls = ls
-
 			override def realBoundedRectangle: Rectangle = grips.realBoundedRectangle
 
 			val relativeBoundedRectangle: Rectangle = shapeNormalisedBoundedRectangle
@@ -105,8 +101,6 @@ class BlockShape(val nestedShapes: List[Shape] = List(), val layoutPoint: LaidOu
 
 	protected def initialLayoutOutShape: LaidOutShape = {
 		new LaidOutShape with UsableLaidOutShape {
-			override def __ls = new LayoutState(rotation = 0.0, scale = 1.0, translation = Point(0, 0))
-
 			override def realBoundedRectangle: Rectangle = PointRectangle(Point(0, 0))
 
 			override def relativeBoundedRectangle: Rectangle = PointRectangle(Point(0, 0))

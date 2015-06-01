@@ -16,8 +16,6 @@ case class Image(nestedShapes: List[Shape]) {
 	}
 
 	def initialLayedOutShape: LaidOutShape = new LaidOutShape with UsableLaidOutShape {
-		override def __ls = new LayoutState(rotation = 0.0, scale = 1.0, translation = Point(0, 0))
-
 		override def realBoundedRectangle: Rectangle = PointRectangle(Point(0, 0))
 
 		override def relativeBoundedRectangle: Rectangle = PointRectangle(Point(0, 0))

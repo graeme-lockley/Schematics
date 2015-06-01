@@ -7,8 +7,6 @@ trait Shape {
 }
 
 trait LaidOutShape {
-	def __ls: LayoutState
-
 	def nestedShapes: List[LaidOutShape]
 
 	def realBoundedRectangle: Rectangle

@@ -1,7 +1,10 @@
-package za.co.no9.draw
+package za.co.no9.draw.examples
 
-object DCLayering {
-	def main(args: Array[String]) {
+import org.scalatest.FlatSpec
+import za.co.no9.draw._
+
+class BoxesTest extends FlatSpec {
+	"Given a description of layered boxes with centered titles within each box and subtitles rotated left" should "render into layered-boxes-with-subtitles" in {
 		val home: LaidOutShape => LayoutPoint = p => LayoutPoint(North(), At(Point(0, 0), Point(0, 0)))
 		def south(steps: Int = 0): LaidOutShape => LayoutPoint = p => LayoutPoint(North(), At(p.last(0).get.grips.south, Point(0, steps)))
 
@@ -22,6 +25,6 @@ object DCLayering {
 			box(List("Double", "Subtitle"), south(10), "A description for the layer"),
 			box(List("Double", "Subtitle"), south(10), "A description for the layer"),
 			box(List("Double", "Subtitle"), south(10), "A description for the layer"))
-		).draw("DCLayering.png")
+		).draw("target/layered-boxes-with-subtitles.png")
 	}
 }

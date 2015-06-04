@@ -4,9 +4,13 @@ import org.scalatest.FlatSpec
 import za.co.no9.draw._
 
 class BoxesTest extends FlatSpec {
+	val home: LaidOutShape => LayoutPoint = p => LayoutPoint(NorthWest(), At(Point(0, 0), Point(0, 0)))
+
+	def south(steps: Int = 0): LaidOutShape => LayoutPoint = p => LayoutPoint(North(), At(p.last(0).get.grips.south, Point(0, steps)))
+
+	def west(steps: Int = 0): LaidOutShape => LayoutPoint = p => LayoutPoint(West(), At(p.last(0).get.grips.east, Point(steps, 0)))
+
 	"Given a description of layered boxes with centered titles within each box and subtitles rotated left" should "render into layered-boxes-with-subtitles" in {
-		val home: LaidOutShape => LayoutPoint = p => LayoutPoint(North(), At(Point(0, 0), Point(0, 0)))
-		def south(steps: Int = 0): LaidOutShape => LayoutPoint = p => LayoutPoint(North(), At(p.last(0).get.grips.south, Point(0, steps)))
 
 		val boxFillStyle = Some(GradientFillStyle(fromColour = Colour(195, 215, 232), toColour = Colour(255, 255, 255)))
 		def box(names: List[String], layoutPoint: LaidOutShape => LayoutPoint, text: String) = {
@@ -27,4 +31,35 @@ class BoxesTest extends FlatSpec {
 			box(List("Double", "Subtitle"), south(10), "A description for the layer"))
 		).draw("target/layered-boxes-with-subtitles.png")
 	}
+
+	"Given a box with a subtitle and boxes within" should "render into layered-boxes-with-subtitles-and-enclosed-boxes" in {
+		Image(List(
+			new BoxShape(List(
+				new BoxShape(List(), p => LayoutPoint(North(), At(p.last(0).get.grips.west, Point(5, 0))), width = 30, height = 9, rotation = 270, lineStyle = None, text = Some(Text("Subtitle"))),
+				new BoxShape(List(), p => LayoutPoint(West(), At(p.last(1).get.grips.west, Point(40, 0))), width = 50, height = 36, text = Some(Text("System A"))),
+				new BoxShape(List(), west(10), width = 50, height = 36, text = Some(Text("System B"))),
+				new BoxShape(List(), west(10), width = 50, height = 36, text = Some(Text("System C")))
+			), home, width = 550, height = 40),
+			new BoxShape(List(
+				new BoxShape(List(), p => LayoutPoint(North(), At(p.last(0).get.grips.west, Point(5, 0))), width = 30, height = 9, rotation = 270, lineStyle = None, text = Some(Text("Subtitle"))),
+				new BlockShape(List(
+					new BoxShape(List(), p => LayoutPoint(West(), At(p.last(1).get.grips.west, Point(40, 0))), width = 50, height = 36, text = Some(Text("System A"))),
+					new BoxShape(List(), west(10), width = 50, height = 36, text = Some(Text("System B"))),
+					new BoxShape(List(), west(10), width = 50, height = 36, text = Some(Text("System C")))
+				), p => {
+					println(lastList(p))
+					println(s"${p.last(1).get.name}: ${p.last(1).get.grips.centre} ${p.last(1).get.relativeBoundedRectangle} ${p.last(1).get.relativeBoundedRectangle.grips.centre}")
+					println(s"${LayoutPoint(Centre(), At(p.last(1).get.grips.centre, Point(0, 0)))}")
+					//					LayoutPoint(Centre(), At(p.last(1).get.grips.centre, Point(0, 0)))
+					LayoutPoint(Centre(), At(p.last(1).get.grips.nw, Point(275.0, 20.0)))
+				})
+			), south(10), width = 550, height = 40)
+		)).draw("target/render into layered-boxes-with-subtitles-and-enclosed-boxes.png")
+	}
+
+	def lastList(p: LaidOutShape): List[String] =
+		p.last(1) match {
+			case None => Nil
+			case Some(pp) => p.name :: lastList(pp)
+		}
 }

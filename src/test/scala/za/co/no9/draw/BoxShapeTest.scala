@@ -105,6 +105,26 @@ class BoxShapeTest extends FlatSpec with PropertyChecks with Matchers {
 		assertLayoutShape(layedOutShape.nestedShapes(1).nestedShapes(1), 0, List("boxB.2", "_boxB.2", "boxB.1", "_boxB.1", "_innerBlockShapeB", "innerBlockShapeA", "_innerBlockShapeA", "_outerBlock", "_test"), List("_boxB.2", "_boxB.1", "_innerBlockShapeB", "_innerBlockShapeA", "_outerBlock", "_test"))
 	}
 
+	"Given 2 boxes centered in a box" should "be correctly layed out" in {
+		val outer = new BoxShape(
+			List(
+				new BlockShape(List(
+					new BoxShape(layoutPoint = p => LayoutPoint(West(), At(p.grips.west, Point(0, 0))), width = 10, height = 10, name = "boxA"),
+					new BoxShape(layoutPoint = p => LayoutPoint(West(), At(p.grips.east, Point(10, 0))), width = 10, height = 10, name = "boxB")
+				), layoutPoint = p => LayoutPoint(Centre(), At(p.grips.centre, Point(0, 0))), name = "innerBlock")),
+			layoutPoint = p => LayoutPoint(North(), At(p.grips.south, Point(0, 0))), width = 100, height = 40,
+			name = "outer"
+		)
+		val ls = new TX(rotation = 0.0, scale = 1.0, translation = Point(0, 0))
+
+		val layedOutShape = outer.layout(initialLayedOutShape, ls)
+
+		assert(rectangleEquals(layedOutShape.grips.realBoundedRectangle, BoundedRectangle(Point(-50, 0), Point(50, 40)), theta))
+		assert(rectangleEquals(layedOutShape.nestedShapes(0).grips.realBoundedRectangle, BoundedRectangle(Point(-15, 15), Point(15, 25)), theta))
+		assert(rectangleEquals(layedOutShape.nestedShapes(0).nestedShapes(0).grips.realBoundedRectangle, BoundedRectangle(Point(-15, 15), Point(-5, 25)), theta))
+		assert(rectangleEquals(layedOutShape.nestedShapes(0).nestedShapes(1).grips.realBoundedRectangle, BoundedRectangle(Point(5, 15), Point(15, 25)), theta))
+	}
+
 	def assertLayoutShape(layedOutShape: LaidOutShape, nestedShapeLength: Int, previousNames: List[String], lastNames: List[String]): Unit = {
 		assert(layedOutShape.nestedShapes.length === nestedShapeLength)
 		assertPreviousNames(layedOutShape, previousNames)

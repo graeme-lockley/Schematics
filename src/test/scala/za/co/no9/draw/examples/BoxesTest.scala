@@ -36,23 +36,21 @@ class BoxesTest extends FlatSpec {
 		Image(List(
 			new BoxShape(List(
 				new BoxShape(List(), p => LayoutPoint(North(), At(p.last(0).get.grips.west, Point(5, 0))), width = 30, height = 9, rotation = 270, lineStyle = None, text = Some(Text("Subtitle"))),
-				new BoxShape(List(), p => LayoutPoint(West(), At(p.last(1).get.grips.west, Point(40, 0))), width = 50, height = 36, text = Some(Text("System A"))),
-				new BoxShape(List(), west(10), width = 50, height = 36, text = Some(Text("System B"))),
-				new BoxShape(List(), west(10), width = 50, height = 36, text = Some(Text("System C")))
+				new BoxShape(List(), p => LayoutPoint(West(), At(p.last(1).get.grips.west, Point(40, 0))), width = 50, height = 34, text = Some(Text("System A"))),
+				new BoxShape(List(), west(10), width = 50, height = 34, text = Some(Text("System B"))),
+				new BoxShape(List(), west(10), width = 50, height = 34, text = Some(Text("System C")))
 			), home, width = 550, height = 40),
 			new BoxShape(List(
 				new BoxShape(List(), p => LayoutPoint(North(), At(p.last(0).get.grips.west, Point(5, 0))), width = 30, height = 9, rotation = 270, lineStyle = None, text = Some(Text("Subtitle"))),
+				new BoxShape(List(), p => LayoutPoint(West(), At(p.last(1).get.grips.west, Point(40, 0))), width = 170, height = 34, text = Some(Text("System A")))
+			), south(10), width = 550, height = 40),
+			new BoxShape(List(
+				new BoxShape(List(), p => LayoutPoint(North(), At(p.last(0).get.grips.west, Point(5, 0))), width = 30, height = 9, rotation = 270, lineStyle = None, text = Some(Text("Subtitle"))),
 				new BlockShape(List(
-					new BoxShape(List(), p => LayoutPoint(West(), At(p.last(1).get.grips.west, Point(40, 0))), width = 50, height = 36, text = Some(Text("System A"))),
-					new BoxShape(List(), west(10), width = 50, height = 36, text = Some(Text("System B"))),
-					new BoxShape(List(), west(10), width = 50, height = 36, text = Some(Text("System C")))
-				), p => {
-					println(lastList(p))
-					println(s"${p.last(1).get.name}: ${p.last(1).get.grips.centre} ${p.last(1).get.relativeBoundedRectangle} ${p.last(1).get.relativeBoundedRectangle.grips.centre}")
-					println(s"${LayoutPoint(Centre(), At(p.last(1).get.grips.centre, Point(0, 0)))}")
-					//					LayoutPoint(Centre(), At(p.last(1).get.grips.centre, Point(0, 0)))
-					LayoutPoint(Centre(), At(p.last(1).get.grips.nw, Point(275.0, 20.0)))
-				})
+					new BoxShape(List(), p => LayoutPoint(West(), At(p.last(0).get.grips.west, Point(0, 0))), width = 50, height = 34, text = Some(Text("System A"))),
+					new BoxShape(List(), west(10), width = 50, height = 34, text = Some(Text("System B"))),
+					new BoxShape(List(), west(10), width = 50, height = 34, text = Some(Text("System C")))
+				), p => LayoutPoint(Centre(), At(p.last(1).get.grips.centre, Point(0, 0))))
 			), south(10), width = 550, height = 40)
 		)).draw("target/render into layered-boxes-with-subtitles-and-enclosed-boxes.png")
 	}

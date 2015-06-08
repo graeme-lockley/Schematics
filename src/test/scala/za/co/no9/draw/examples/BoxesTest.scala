@@ -11,7 +11,6 @@ class BoxesTest extends FlatSpec {
 	def west(steps: Int = 0): LaidOutShape => LayoutPoint = p => LayoutPoint(West(), At(p.last(0).get.grips.east, Point(steps, 0)))
 
 	"Given a description of layered boxes with centered titles within each box and subtitles rotated left" should "render into layered-boxes-with-subtitles" in {
-
 		val boxFillStyle = Some(GradientFillStyle(fromColour = Colour(195, 215, 232), toColour = Colour(255, 255, 255)))
 		def box(names: List[String], layoutPoint: LaidOutShape => LayoutPoint, text: String) = {
 			val firstLayout: LaidOutShape => LayoutPoint = p => LayoutPoint(North(), At(p.last(0).get.grips.west, Point(5, 0)))
@@ -52,12 +51,6 @@ class BoxesTest extends FlatSpec {
 					new BoxShape(List(), west(10), width = 50, height = 34, text = Some(Text("System C")))
 				), p => LayoutPoint(Centre(), At(p.last(1).get.grips.centre, Point(0, 0))))
 			), south(10), width = 550, height = 40)
-		)).draw("target/render into layered-boxes-with-subtitles-and-enclosed-boxes.png")
+		)).draw("target/layered-boxes-with-subtitles-and-enclosed-boxes.png")
 	}
-
-	def lastList(p: LaidOutShape): List[String] =
-		p.last(1) match {
-			case None => Nil
-			case Some(pp) => p.name :: lastList(pp)
-		}
 }

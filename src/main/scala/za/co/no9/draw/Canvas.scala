@@ -7,6 +7,8 @@ import java.io.File
 import javax.imageio.ImageIO
 
 trait Canvas {
+	def drawLines(points: List[Point])
+
 	def drawText(text: Text, boundingRectangle: Rectangle)
 
 	def drawRectangle(rectangle: Rectangle, lineStyle: Option[LineStyle], fillStyle: Option[FillStyle])
@@ -79,6 +81,11 @@ class BufferedImage(dimension: Rectangle, boundary: Double = 2.0, scale: Int = 5
 				boundingRectangle.topLeft.midPoint(boundingRectangle.bottomRight).add(-stringWidth / 2, -visualBounds.height / 2 - visualBounds.y)
 		}
 		graphics.drawString(text.content, origin.x.toInt, origin.y.toInt)
+	}
+
+	override def drawLines(points: List[Point]) = {
+		setTransform(new AffineTransform());
+		graphics.drawLine(points(0).x.toInt, points(0).y.toInt, points(1).x.toInt, points(1).y.toInt)
 	}
 
 	def write(format: String, fileName: String): Unit = ImageIO.write(renderBI, format, new File(fileName))

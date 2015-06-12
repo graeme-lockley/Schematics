@@ -18,9 +18,7 @@ class LineShape(points: (LaidOutShape) => List[At], val text: Option[Text] = Non
 
 			override def realBoundedRectangle: Rectangle = {
 				val initial: Rectangle = PointRectangle(absolutePoints.head)
-				val br = absolutePoints.tail.foldLeft(initial)((x, y) => x.union(PointRectangle(y)))
-				println(br)
-				br
+				absolutePoints.tail.foldLeft(initial)((x, y) => x.union(PointRectangle(y)))
 			}
 
 			override def render(canvas: Canvas): Unit = canvas.drawLines(absolutePoints)

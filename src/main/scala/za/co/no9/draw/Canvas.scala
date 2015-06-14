@@ -31,8 +31,8 @@ class BufferedImage(dimension: Rectangle, boundary: Double = 2.0, scale: Int = 5
 			fillStyle.get match {
 				case SolidFillStyle(colour) => setPaint(colour)
 				case GradientFillStyle(startColour, endColour) =>
-					val redtowhite = new GradientPaint(rectangle.topLeft.x.toFloat, rectangle.topLeft.y.toFloat, toColor(startColour), rectangle.bottomRight.x.toFloat, rectangle.bottomRight.y.toFloat, toColor(endColour))
-					graphics.setPaint(redtowhite);
+					val gradientPaintStyle = new GradientPaint(rectangle.topLeft.x.toFloat, rectangle.topLeft.y.toFloat, toColor(startColour), rectangle.bottomRight.x.toFloat, rectangle.bottomRight.y.toFloat, toColor(endColour))
+					graphics.setPaint(gradientPaintStyle);
 			}
 			graphics.fill(new Rectangle2D.Double(rectangle.topLeft.x, rectangle.topLeft.y, rectangle.width, rectangle.height))
 		}

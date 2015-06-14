@@ -15,7 +15,7 @@ class LineShape(points: (LaidOutShape) => List[At], val text: Option[Text] = Non
 	}
 }
 
-class LineLaidOutShape(val previousLayedOutShape: LaidOutShape, val absolutePoints: List[Point], val shapeName: String) extends LaidOutShape with UsableLaidOutShape {
+class LineLaidOutShape(val previousLaidOutShape: LaidOutShape, val absolutePoints: List[Point], val shapeName: String) extends LaidOutShape with UsableLaidOutShape {
 	override def relativeBoundedRectangle: Rectangle = PointRectangle(Point(0, 0))
 
 	override def grips: Grips = PointRectangle(Point(0, 0)).grips
@@ -31,5 +31,5 @@ class LineLaidOutShape(val previousLayedOutShape: LaidOutShape, val absolutePoin
 
 	override val name: String = "_" + shapeName
 
-	override val previous: Option[LaidOutShape] = Some(previousLayedOutShape)
+	override val previous: Option[LaidOutShape] = Some(previousLaidOutShape)
 }

@@ -7,7 +7,7 @@ class LineShape(points: (LaidOutShape) => List[At], val text: Option[Text] = Non
 
 	override def layout(previousLayedOutShape: LaidOutShape, layoutState: TX): LaidOutShape = {
 		val absolutePoints = points(previousLayedOutShape).map(atPoint => {
-			val pointTX: TX = TX(new AffineTransform(), 0.0, 1.0, atPoint.position)
+			val pointTX: TX = TX(new AffineTransform(), layoutState.rotation, layoutState.scale, atPoint.position)
 			pointTX.transform(atPoint.relative)
 		})
 

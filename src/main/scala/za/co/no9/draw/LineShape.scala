@@ -25,7 +25,7 @@ class LineLaidOutShape(val previousLayedOutShape: LaidOutShape, val absolutePoin
 		absolutePoints.tail.foldLeft(initial)((x, y) => x.union(PointRectangle(y)))
 	}
 
-	override def render(canvas: Canvas): Unit = canvas.drawLines(absolutePoints)
+	override def render(canvas: Canvas): Unit = canvas.drawLine(absolutePoints)
 
 	override def nestedShapes: List[LaidOutShape] = List()
 

@@ -7,7 +7,7 @@ import java.io.File
 import javax.imageio.ImageIO
 
 trait Canvas {
-	def drawLines(points: List[Point])
+	def drawLine(points: List[Point])
 
 	def drawText(text: Text, boundingRectangle: Rectangle)
 
@@ -83,7 +83,7 @@ class BufferedImage(dimension: Rectangle, boundary: Double = 2.0, scale: Int = 5
 		graphics.drawString(text.content, origin.x.toInt, origin.y.toInt)
 	}
 
-	override def drawLines(points: List[Point]) = {
+	override def drawLine(points: List[Point]) = {
 		setTransform(new AffineTransform());
 		graphics.drawLine(points(0).x.toInt, points(0).y.toInt, points(1).x.toInt, points(1).y.toInt)
 	}

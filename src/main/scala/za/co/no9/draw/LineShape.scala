@@ -5,13 +5,13 @@ import java.awt.geom.AffineTransform
 class LineShape(points: (LaidOutShape) => List[At], val text: Option[Text] = None, val lineStyle: Option[LineStyle] = Some(LineStyle(width = 1.0f, colour = Colour(0, 0, 0))), val rotation: Double = 0.0, val name: String = "_box") extends Shape {
 	override def nestedShapes: List[Shape] = List()
 
-	override def layout(previousLayedOutShape: LaidOutShape, layoutState: TX): LaidOutShape = {
-		val absolutePoints = points(previousLayedOutShape).map(atPoint => {
+	override def layout(previousLaidOutShape: LaidOutShape, layoutState: TX): LaidOutShape = {
+		val absolutePoints = points(previousLaidOutShape).map(atPoint => {
 			val pointTX: TX = TX(new AffineTransform(), layoutState.rotation, layoutState.scale, atPoint.position)
 			pointTX.transform(atPoint.relative)
 		})
 
-		new LineLaidOutShape(previousLayedOutShape, absolutePoints, name)
+		new LineLaidOutShape(previousLaidOutShape, absolutePoints, name)
 	}
 }
 

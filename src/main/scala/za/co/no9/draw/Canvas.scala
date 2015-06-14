@@ -68,7 +68,6 @@ class BufferedImage(dimension: Rectangle, boundary: Double = 2.0, scale: Int = 5
 		graphics.setFont(font)
 		val fontMetrics = graphics.getFontMetrics
 		val stringWidth = fontMetrics.stringWidth(text.content)
-		val stringHeight = fontMetrics.getAscent
 
 		val renderContext = graphics.getFontRenderContext
 		val glyphVector = font.createGlyphVector(renderContext, text.content)
@@ -84,7 +83,7 @@ class BufferedImage(dimension: Rectangle, boundary: Double = 2.0, scale: Int = 5
 	}
 
 	override def drawLine(points: List[Point]) = {
-		setTransform(new AffineTransform());
+		setTransform(new AffineTransform())
 		graphics.drawLine(points(0).x.toInt, points(0).y.toInt, points(1).x.toInt, points(1).y.toInt)
 	}
 

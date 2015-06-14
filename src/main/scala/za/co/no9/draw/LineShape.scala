@@ -11,23 +11,25 @@ class LineShape(points: (LaidOutShape) => List[At], val text: Option[Text] = Non
 			pointTX.transform(atPoint.relative)
 		})
 
-		new LaidOutShape with UsableLaidOutShape {
-			override def relativeBoundedRectangle: Rectangle = PointRectangle(Point(0, 0))
-
-			override def grips: Grips = PointRectangle(Point(0, 0)).grips
-
-			override def realBoundedRectangle: Rectangle = {
-				val initial: Rectangle = PointRectangle(absolutePoints.head)
-				absolutePoints.tail.foldLeft(initial)((x, y) => x.union(PointRectangle(y)))
-			}
-
-			override def render(canvas: Canvas): Unit = canvas.drawLines(absolutePoints)
-
-			override def nestedShapes: List[LaidOutShape] = List()
-
-			override val name: String = "_" + LineShape.this.name
-
-			override val previous: Option[LaidOutShape] = Some(previousLayedOutShape)
-		}
+		new LineLaidOutShape(previousLayedOutShape, absolutePoints, name)
 	}
+}
+
+class LineLaidOutShape(val previousLayedOutShape: LaidOutShape, val absolutePoints: List[Point], val shapeName: String) extends LaidOutShape with UsableLaidOutShape {
+	override def relativeBoundedRectangle: Rectangle = PointRectangle(Point(0, 0))
+
+	override def grips: Grips = PointRectangle(Point(0, 0)).grips
+
+	override def realBoundedRectangle: Rectangle = {
+		val initial: Rectangle = PointRectangle(absolutePoints.head)
+		absolutePoints.tail.foldLeft(initial)((x, y) => x.union(PointRectangle(y)))
+	}
+
+	override def render(canvas: Canvas): Unit = canvas.drawLines(absolutePoints)
+
+	override def nestedShapes: List[LaidOutShape] = List()
+
+	override val name: String = "_" + shapeName
+
+	override val previous: Option[LaidOutShape] = Some(previousLayedOutShape)
 }
